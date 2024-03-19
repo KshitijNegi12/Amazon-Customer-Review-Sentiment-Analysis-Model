@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    <title>Sentiment Analysis</title>
+</head>
+<body>
+    <h1>Sentiment Analysis</h1>
+
+    <div class="container">
+        <form action="/result" method="post">
+            <label>Choose Input Type:</label>
+            <select id="inputType" name="inputType" onchange="toggleInput()">
+                <option value="text">Text</option>
+                <option value="link">Link</option>
+            </select>
+    
+            <div id="textInput">
+                <label for="textInput">Enter Text:</label>
+                <textarea class="text" id="textInput" name="text" rows="1" cols="50"></textarea>
+            </div>
+    
+            <div id="linkInput">
+                <label for="linkInput">Enter Link:</label>
+                <textarea name="link" rows="1" cols="50"></textarea>
+            </div>
+    
+            <input type="submit" value="Submit">
+        </form>
+        <br>
+        <br>
+        <div id="result">
+            {% if page == 1 %}
+            <p>Sentiment Result: {{ prediction_text }}</p>
+            <p>Confidence: {{ confidence }}</p>
+            {% elif page == 0 %}
+            <a href="{{ url_for('download_data')}}" download>Download File</a>
+            {% elif page == -1 %}
+            <p> Invalid Input!! Please try again...</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js')}}"></script>
+</body>
+</html>
