@@ -5,6 +5,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from multiprocessing import Process
 from amazon.amazon.spiders.amspy import AmspySpider
+from text_filter import my_review_filter
 model = None
 vectorizer = None
 
