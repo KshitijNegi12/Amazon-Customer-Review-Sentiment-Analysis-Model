@@ -23,6 +23,16 @@ function autoResizeTextarea() {
 
 document.getElementById('textarea').addEventListener('input', autoResizeTextarea);
 
+function followup(button, event) {
+    document.getElementById('loading').style.display='block';
+    event.preventDefault();
+    button.disabled = true;
+    setTimeout(function() {
+        document.getElementById('myform').submit();
+    }, 100);
+}
+
+
 // function rightpage(){
 //     var textInput = document.getElementById("textInput");
 //     var linkInput = document.getElementById("linkInput");

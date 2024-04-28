@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='../static/style.css')}}">
-    <!-- <link rel="stylesheet" href="../static/style.css"> -->
+    <link rel="stylesheet" href="../static/style.css">
     <title>Sentiment Analysis</title>
 </head>
 <body>
@@ -15,7 +15,7 @@
     <h1 class="head">Sentiment Analysis</h1>
 
     <div class="container">
-        <form action="/result" method="post">
+        <form action="/result" method="post" id="myform">
             <div class="item">
                 <h4>Choose Input Type:</h4>
                 <select id="inputType" name="inputType" onchange="toggleInput()">
@@ -34,8 +34,12 @@
                 <textarea name="link" rows="2" cols="50"></textarea>
             </div>
     
-            <input type="submit" value="Submit">
+            <input type="submit" value="Submit" onclick="followup(this, event);">
         </form>
+
+        <div id="loading">
+            <img src="../static/loading.gif" alt="loading" draggable="false">
+        </div>
 
         <div id="result">
             {% if page == 'text' %}
@@ -65,12 +69,12 @@
     </div>
     
     <script src="{{ url_for('static', filename='../static/script.js')}}"></script>
+    <script src="../static/script.js"></script>
     <!-- <script>
         {% if page not in ['text', 'empty', ''] %}
         console.log(page);
             rightpage(); 
         {% endif %}
     </script> -->
-    <!-- <script src="../static/script.js"></script> -->
 </body>
 </html>
