@@ -56,42 +56,22 @@ def home():
 
 @app.route('/result', methods=['POST','GET'])
 def result():
-    res = ""
-    confidence = -1
     if(model==None):init()
     if request.method == 'POST':
-        input = request.form['inputType']
-        if input == 'text':
-            txt = request.form['text']
-            if len(txt)>0:
-                X = vectorizer.transform([txt])
-                predict_val = model.predict(X)
-                prob = model.predict_proba(X)
-                if predict_val == 1:
-                    predict_res = 'POSITIVE'
-                    confidence = prob[0][1]
-                    return render_template('index.html', page='text', prediction_text = predict_res, confidence = round(100*confidence,2), bg='green')
-                else:
-                    predict_res = 'NEGATIVE'
-                    confidence = prob[0][0]
-                    return render_template('index.html', page='text', prediction_text = predict_res, confidence = round(100*confidence,2), bg='red')
+        link = request.form['link']
+        if len(link) > 0 and link.startswith('https://www.amazon.in/'):
+            #empty the data.csv
+            df=pd.DataFrame()
+            df.to_csv('./data.csv', index=False)
+            crawl_process = Process(target=crawl, args=(link,))
+            crawl_process.start()
+            crawl_process.join() 
+            if calc():
+                return render_template('index.html', page='download')
             else:
-                return render_template('index.html', page='empty')
+                return render_template('index.html', page='error')
         else:
-            link = request.form['link']
-            if len(link) > 0 and link.startswith('https://www.amazon.in/'):
-                #empty the data.csv
-                df=pd.DataFrame()
-                df.to_csv('./data.csv', index=False)
-                crawl_process = Process(target=crawl, args=(link,))
-                crawl_process.start()
-                crawl_process.join() 
-                if calc():
-                    return render_template('index.html', page='download')
-                else:
-                    return render_template('index.html', page='error')
-            else:
-                return render_template('index.html', page='wrong_link')
+            return render_template('index.html', page='wrong_link')
 
 @app.route('/download_data', methods=['POST','GET'])
 def download_data():

@@ -63,19 +63,14 @@ body {
     
 }
 
-#inputType{
-    border-radius: .4em;
-    padding: .1em .4em;
-    font-size: .6em;
-    border: 1px solid #483e3e;
-}
-
 .item{
     margin-bottom: 1em;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: .7em;
+    margin-top: .7em;
+
 }
 
 #textarea{
@@ -92,10 +87,6 @@ input[type='Submit']{
     margin-top: .5em;
     font-size: 1.4vmax;
 
-}
-
-#linkInput {
-    display: none;
 }
 
 #loading{

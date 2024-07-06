@@ -16,22 +16,11 @@
 
     <div class="container">
         <form action="/result" method="post" id="myform">
-            <div class="item">
-                <h4>Choose Input Type:</h4>
-                <select id="inputType" name="inputType" onchange="toggleInput()">
-                    <option value="text" style="text-align: center;" selected>Text</option>
-                    <option value="link" style="text-align: center;" >Product URL</option>
-                </select>
-            </div>
+            <h4>Enter a valid Amazon Product Link 👇</h4>
             
-            <div id="textInput" class="item">
-                <h4>Enter Text: </h4>
-                <textarea id="textarea" name="text" rows="1" cols="50"></textarea>
-            </div>
-    
             <div id="linkInput" class="item">
                 <h4>Enter URL: </h4>
-                <textarea name="link" rows="2" cols="50"></textarea>
+                <textarea id="textarea" name="link" rows="3" cols="50"></textarea>
             </div>
     
             <input type="submit" value="Submit" onclick="followup(this, event);">
@@ -42,18 +31,9 @@
         </div>
 
         <div id="result">
-            {% if page == 'text' %}
-            <div style="background-color: {{bg}};"> 
-                <p>Sentiment Result: {{ prediction_text }}</p>
-                <p>Confidence: {{ confidence }}</p>
-            </div>
-            {% elif page == 'download' %}
+            {% if page == 'download' %}
             <div>
                 <a href="{{ url_for('download_data')}}" download>Download File</a>
-            </div>
-            {% elif page == 'empty' %}
-            <div>
-                <p>Sentiment of empty text hmm...🤔🤔</p>
             </div>
             {% elif page == 'wrong_link' %}
             <div>
@@ -70,11 +50,5 @@
     
     <script src="{{ url_for('static', filename='../static/script.js')}}"></script>
     <script src="../static/script.js"></script>
-    <!-- <script>
-        {% if page not in ['text', 'empty', ''] %}
-        console.log(page);
-            rightpage(); 
-        {% endif %}
-    </script> -->
 </body>
 </html>
