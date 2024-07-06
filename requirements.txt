@@ -6,3 +6,4 @@ pandas
 joblib==1.3.2
 Gunicorn
 scikit-learn==1.3.0
+numpy
