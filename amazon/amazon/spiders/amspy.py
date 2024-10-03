@@ -1,4 +1,5 @@
 import scrapy
+import numpy as np
 from ..items import AmazonItem
 from latest_user_agents import get_random_user_agent
 
@@ -32,23 +33,33 @@ class AmspySpider(scrapy.Spider):
 		if len(search)>0:
 			yield scrapy.Request(url=search, callback=self.parse_amazon)
 
-	
-	def parse_amazon(self, response):
-		# print(response.request.headers)
-		next_path = response.xpath('//div[@id="reviews-medley-footer"]/div[2]/a')
-		if next_path:
-			next_path = next_path.attrib['href']
-			next_url = response.urljoin(next_path)
-			yield response.follow(next_url, callback=self.follow_link)
-
-
-	def follow_link(self, response):
-		data=response.xpath('//div[@class="a-section a-spacing-none reviews-content a-size-base"]//div[@class="a-section review aok-relative"]//div[@class="a-row a-spacing-small review-data"]/span/span')
+# this works most of times because of same page reviews
+	def parse_amazon(self,response):
+		data = response.xpath('//*[@class="a-section celwidget"]/div/span/div/div[1]/span')
 		for feed in data:
 			li = feed.xpath('string()').get().strip()
-			item = AmazonItem()
-			item['text'] = li
-			yield item			
+			if li and not (li == '' or li == 'NaN' or li == np.nan):  
+				item = AmazonItem()
+				item['text'] = li
+				yield item	
+
+# the next page which contain 10 reviews, not always work becoz of rel errors
+	# def parse_amazon(self, response):
+	# 	# print(response.request.headers)
+	# 	next_path = response.xpath('//div[@id="reviews-medley-footer"]/div[2]/a')
+	# 	if next_path:
+	# 		next_path = next_path.attrib['href']
+	# 		next_url = response.urljoin(next_path)
+	# 		yield response.follow(next_url, callback=self.follow_link)
+
+
+	# def follow_link(self, response):
+	# 	data=response.xpath('//div[@class="a-section a-spacing-none reviews-content a-size-base"]//div[@class="a-section review aok-relative"]//div[@class="a-row a-spacing-small review-data"]/span/span')
+	# 	for feed in data:
+	# 		li = feed.xpath('string()').get().strip()
+	# 		item = AmazonItem()
+	# 		item['text'] = li
+	# 		yield item			
 		
 		# This violate robot.txt, can't scrape further
 		# next_page=response.xpath('//li[@class="a-last"]/a')
