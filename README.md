@@ -1,9 +1,9 @@
 # Amazon Review Sentiment Analysis
 
 ## Introduction
-This web application allows users to analyze sentiments of Amazon reviews using a trained Naive Bayes model. By crawling product latest same page reviews, it determines whether the sentiment is positive or negative and provides confidence scores for each prediction.
+This web application allows users to analyze sentiments of amazon.in reviews using a trained Naive Bayes model. By crawling product latest same page reviews, it determines whether the sentiment is positive or negative and provides confidence scores for each prediction.
 
-You can check it [here](https://kshitij-amazon-customer-review.onrender.com).
+You can check it [here](https://amazon-customer-review-sentiment.onrender.com/).
 
 ## Tech Used
 - **FrameWork**: Flask
