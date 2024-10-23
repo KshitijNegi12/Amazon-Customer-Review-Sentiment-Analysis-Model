@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/style.css')}}">
+    <link rel="icon" href="../static/img/title.png" type="image/png">
+    <!-- <link rel="stylesheet" href="../static/style.css"> -->
+    <title>Sentiment Analysis</title>
+</head>
+<body>
+    <h1 class="head">Amazon Customer Review</h1>
+    <h1 class="head">Sentiment Analysis</h1>
+
+    <div class="container">
+        <form action="/result" method="post" id="myform">
+            <h4>Enter a valid Amazon Product Link 👇</h4>
+            
+            <div id="linkInput" class="item">
+                <h4>Enter URL: </h4>
+                <textarea id="textarea" name="link" rows="3" cols="50"></textarea>
+            </div>
+    
+            <input type="submit" value="Submit" onclick="followup(this, event);">
+        </form>
+
+        <div id="result">
+            {% if page == 'download' %}
+            <div>
+                <a href="{{ url_for('download_data')}}" download>Download File</a>
+            </div>
+            {% elif page == 'wrong_link' %}
+            <div>
+                <p>Invalid Link!! Try Again 🔁</p>
+            </div>
+            {% elif page == 'server_not_responding' %}
+            <div>
+                <p>Server Not Responding!! Try Again Later 🔁</p>
+            </div>
+            {% elif page == 'error' %}
+            <div>
+                <p>Error Encountered!! Please check..</p>
+                <p>If the link entered is correct or the product has reviews.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div id="loading">
+        <img src="../static/img/loading.gif" alt="loading" draggable="false">
+        <p>Processing Your Request, This may take some time.</p>
+        <p>Please Wait</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='../static/script.js')}}"></script>
+    <!-- <script src="../static/script.js"></script> -->
+</body>
+</html>
