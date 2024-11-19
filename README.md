@@ -7,7 +7,7 @@ You can check it [here](https://amazon-customer-review-sentiment.onrender.com/).
 
 ## Tech Used
 - **FrameWork**: Flask
-- **Web Scraping**: Scrapy
+- **Web Scraping**: BeautifulSoup
 - **Data Processing**: Pandas
 - **Machine Learning**: Joblib, Naive Bayes Algorithm
 - **Frontend**: HTML, CSS, JavaScript
