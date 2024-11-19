@@ -42,7 +42,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    requests.get('https://kshitijnegi12-amazon-customer-review.onrender.com')
     return render_template('index.html')
 
 @app.route('/result', methods=['POST','GET'])
@@ -55,6 +54,7 @@ def result():
                     return render_template('limit.html')
                 svLink = 'https://kshitijnegi12-amazon-customer-review.onrender.com/get-amazon-reviews'
                 response = requests.post(svLink, data = {'link' : link})
+                print("Status Code GET: ",response.status_code)
                 if(response.status_code == 502):
                     return render_template('index.html', page='server_not_responding')
                 if response.status_code == 200 and genCsv(json.loads(response.text)):
@@ -77,4 +77,4 @@ def download_data():
     return send_file(file_path, as_attachment=True)
 
 if __name__ == '__main__':
-      app.run()
+    app.run()
