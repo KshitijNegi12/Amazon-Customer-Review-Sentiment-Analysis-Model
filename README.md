@@ -3,7 +3,7 @@
 ## Introduction
 This web application allows users to analyze sentiments of amazon.in reviews using a trained Naive Bayes model. By crawling product latest same page reviews, it determines whether the sentiment is positive or negative and provides confidence scores for each prediction.
 
-You can check it [here](https://amazon-customer-review-sentiment.onrender.com/).
+You can check it [here](https://amazon-customer-review-sentiment-analysis-model-mkn2midfh.vercel.app/).
 
 ## Tech Used
 - **FrameWork**: Flask

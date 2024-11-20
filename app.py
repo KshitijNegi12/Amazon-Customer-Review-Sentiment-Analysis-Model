@@ -1,43 +1,71 @@
-from flask import Flask, render_template, request, send_file, redirect
+import joblib
 import pandas as pd
-import requests
-import json
+from flask import Flask, request, render_template, redirect, send_file
+from text_filter import my_review_filter
+from scraper import AmazonScraper
 from datetime import datetime
 
+model = None
+vectorizer = None
 req_count = 0
-prev_req_day = datetime.now().date()
+prev_req_date = datetime.now().date()
 
-def check_limit(initChk):
+def init():
+    global model,vectorizer
+    model = joblib.load(r'Model/trained_model.pkl')
+    vectorizer = joblib.load(r'Model/trained_vectorizer.pkl')
+
+def startScraping(link):
+    scraper = AmazonScraper(link)
+    return scraper.run()
+
+def check_limit():
     curr_date = datetime.now().date()
-    global req_count, prev_req_day
-    if curr_date != prev_req_day:
+    global req_count, prev_req_date
+    if curr_date != prev_req_date:
         req_count = 0
-        prev_req_day = curr_date
+        prev_req_date = curr_date
     if req_count >= 3:
         return True
     else:
-        if not initChk:
-            req_count += 1
-            print(prev_req_day, req_count)
         return False
 
-def genCsv(data):
-    review = []
-    sentiment = []
-    confidence = []
+def sentimentSuccess():
     try:
-        for ele in data:
-            review.append(ele['Review'])
-            sentiment.append(ele['Sentiment'])
-            confidence.append(ele['Confidence'])
-        df = pd.DataFrame({'Review':review,'Sentiment':sentiment,'Confidence':confidence})
-        df.to_csv('./data.csv', index=False)
+        df1 = pd.read_csv(r'data.csv')
+        if df1.empty:
+            print("Error: data.csv is empty.")
+            return False
+        
+        X = vectorizer.transform(df1['Review'])
+        sentiment = model.predict(X)
+        probability = model.predict_proba(X)
+        sentiment=sentiment.flatten().tolist()
+
+        confidence=[]
+        for i in range(len(sentiment)):
+            if sentiment[i] == 1:
+                sentiment[i] = 'Positive'
+                confidence.append(round(100*probability[i][2],2))
+            elif sentiment[i] == 0:
+                sentiment[i] = 'Neutral'
+                confidence.append(round(100*probability[i][1],2))
+            else:
+                sentiment[i] = 'Negative'
+                confidence.append(round(100*probability[i][0],2))
+
+        df2=pd.DataFrame({'Sentiment':sentiment,'Confidence':confidence})
+        df1['Sentiment']=df2['Sentiment']
+        df1['Confidence']=df2['Confidence']
+        df1.to_csv(r'data.csv', index=False)
+        print("Sentiment Analysis Successfull.")
         return True
     except Exception as e:
         print(f"An Error occurred at parsing data of csv. : {e}")
         return False
 
 
+# Flask
 app = Flask(__name__)
 
 @app.route('/')
@@ -46,20 +74,21 @@ def home():
 
 @app.route('/result', methods=['POST','GET'])
 def result():
+    if(model==None):init()
     if request.method == 'POST':
         try:
             link = request.form['link']
             if len(link) > 0 and link.startswith('https://www.amazon.in/'):
-                if check_limit(True):
+                if check_limit():
                     return render_template('limit.html')
-                svLink = 'https://kshitijnegi12-amazon-customer-review.onrender.com/get-amazon-reviews'
-                response = requests.post(svLink, data = {'link' : link})
-                print("Status Code GET: ",response.status_code)
-                if(response.status_code == 502):
-                    return render_template('index.html', page='server_not_responding')
-                if response.status_code == 200 and genCsv(json.loads(response.text)):
-                    if check_limit(False):
-                        return render_template('limit.html')
+                # empty the data.csv
+                df=pd.DataFrame()
+                df.to_csv(r'data.csv', index=False)
+                # start scraping and get result
+                if startScraping(link) and sentimentSuccess():
+                    global req_count, prev_req_date
+                    req_count += 1
+                    print(f'Count and date: {req_count}, {prev_req_date}')
                     return render_template('index.html', page='download')
                 else:
                     return render_template('index.html', page='error')
@@ -70,8 +99,8 @@ def result():
             return render_template('limit.html')
     else:
         return redirect('/')
-
-@app.route('/download_data', methods=['POST','GET'])
+    
+@app.route('/download_data', methods=['GET'])
 def download_data():
     file_path = './data.csv'
     return send_file(file_path, as_attachment=True)
